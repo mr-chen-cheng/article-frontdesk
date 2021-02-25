@@ -1,0 +1,7 @@
+li,ol {
+    list-style: none;
+}
+
+body {
+    font-size: 16px;
+}
