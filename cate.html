@@ -74,7 +74,7 @@
 			</div>
 		</div>
 
-		<button type="button" class="btn  btn-block">查看更多</button>
+		<button type="button" class="btn  btn-block" id="loadmore">查看更多</button>
 		<hr>
 
 		<div class="footer" style="text-align:center;font-size: 14px; color: #999;margin:10px 0;">
@@ -120,5 +120,41 @@
 			$("#crumbs").html(crumbs)
 	}
 	getarticlecate()
+	let page = 1
+	let limit = 3
+	async function catearticle(){
+		var index = layer.load(1, {
+			shade: [0.1,'#ccc'] //0.1透明度的白色背景
+		});
+		let data = await axios.get(`/catearticle/${cat_id}?page=${page}&limit=${limit}`)
+		console.log(data)
+		layer.close(index)
+		if(data.length===0){
+			layer.msg('到底了')
+			return;
+		}
+		let newHtml = ``
+		data.map(v=>{
+			let {Cover,author,publish_date,cat_name,title,content,art_id} = v
+			publish_date = formatDate(publish_date,'YYYY-MM-DD')
+			!Cover && (Cover = 'http://placehold.it/400x150/ccc/ffffff?text=no image')
+			newHtml += `<div class='item row'> 
+					<div class="col-md-2">
+						<img src="${Cover}" alt="">
+					</div>
+					<div class="col-md-10">
+						<div class="date ">作者：${author} 、 ${publish_date} 、分类：${cat_name}</div>
+						<div class="title"><a href="/detail.html?art_id=${art_id}">${title}</a></div>
+					</div>
+					<hr>
+				</div>`;
+		})
+		let Html = $('.artlist').html() + newHtml
+		$('.artlist').html(Html)
+	}
+		$("#loadmore").on('click',function(){
+			page++;
+			catearticle()
+	})
 </script>
 </html>
